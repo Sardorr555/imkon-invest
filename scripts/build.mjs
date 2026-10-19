@@ -1,0 +1,3 @@
+import {readFile,mkdir,writeFile,copyFile} from 'node:fs/promises';
+const template=await readFile('web/index.html','utf8'),strings=(await readFile('web/locales.js','utf8')).replaceAll('export const ','const '),app=await readFile('web/app.js','utf8');
+const html=template.replace('/*__APP__*/',strings+'\n'+app);const worker=await readFile('worker/server.js','utf8');await mkdir('dist/server',{recursive:true});await mkdir('dist/.openai',{recursive:true});await writeFile('dist/server/index.js',worker.replace("'__IMKON_HTML__'",JSON.stringify(html)).replace('/*__IMKON_LOCALES__*/',strings));await copyFile('.openai/hosting.json','dist/.openai/hosting.json');console.log('Built multilingual Imkon Worker');
